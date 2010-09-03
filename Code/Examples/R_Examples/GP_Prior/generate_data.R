@@ -42,6 +42,7 @@ N = 1;
 # Draw N data points from Y ~ N(0, v Q).
 y = rmvnorm(N, rep(0, T), vQ);
 
+# We want y to be a column vector.
 y = matrix(y, T, 1);
 
 # To write the data...

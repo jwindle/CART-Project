@@ -16,18 +16,58 @@
 
 \chapter{Examples}
 
-Examples can be found in the \texttt{\$PATH/CART-Project/Code/Examples} directory.  Examples explore code generated along the way to creating our program for analyzing the long term performance data of companies.  These examples mostly explore the Gnu Scientific Library (GSL).  Here is a short description of each.
+Examples can be found in the \texttt{\$PATH/CART-Project/Code/Examples} directory.  Examples explore code generated along the way to creating our program for analyzing the long term performance of companies.  These examples mostly explore the GNU Scientific Library (GSL).  Below is a short description of each example.  More information about the GSL can be found at \url{http://www.gnu.org/software/gsl/manual/html_node/}
 \begin{itemize}
 
 \item Basic Examples
+\begin{itemize}
+
+\item \texttt{example.makefile} and \texttt{example.c} - These two files provide a basic example of how to compile code that uses the GSL.  Make sure you include the correct header files when writing your own code.
+
+\end{itemize}
 
 \item Matrix Examples
+\begin{itemize}
+
+\item \texttt{cholesky\_example.c} - See how to \emph{construct a matrix}, find its \emph{Cholesky decomposition} using the GSL, and \emph{print a matrix}.  Details about how the GSL returns this information is contained therein.
+
+\item \texttt{lu\_example.c} - Computes the LU decomposition of a matrix.
+
+\item \texttt{multiply\_example.c} - \emph{Matrix vector multiplication}.
+
+\item \texttt{mvn\_density\_using\_svd.c} - Implements an algorithm to compute a multivariate normal density using the singular value decomposition of a covariance matrix.  In particular, if $C$ is a covariance matrix we can decompose $C$ as $C = UDU^T$ where $U$ is a unitary matrix, that is $UU^T = U^TU = I$.  Thus we can calculate the squareroot of the inverse of $C$ as $Sq = UD^{-1/2}$.  We can use this quantity to calculate the square $x^TC^{-1}x$ in the exponential of the normal density via $(U D^{-1/2})^T x \cdot (U D^{-1/2})^T x$. 
+\item \texttt{svd\_example.c} - Shows how GSL computes the SVD of a matrix.
+
+\end{itemize}
 
 \item Sampling Examples
+\begin{itemize}
+
+\item \texttt{sample\_gamma.c} - Shows how to sample from a Gamma distribution.  \textbf{Make sure you use the correct parameters}.  The GSL uses \textbf{shape} and \textbf{scale} parameters.  This corresponds to the parameters found on Wikipedia.  However, this differs from the parameters used in our analysis, where we specify the \textbf{rate} instead of the scale.  These quantities are reciprical, $rate = 1 / scale$.
+
+\item \texttt{sample\_gaussian.c} - Shows how to sample from a one dimensional normal random variable.
+
+\item \texttt{sample\_mvn\_using\_chol.c} and \texttt{sample\_mvn\_using\_svd.c} - These two files demonstrate how we can sample from a multivariate normal distribution using either the Cholesky decomposition or the SVD decomposition of the covariance matrix.  In particular, both the Cholesky decomposition and the SVD provide an analog of the square root of a covariance matrix $C = AA^T$.  If we sample from a standard normal random variable $X$, which we can generate from repeated independent draws, then we can sample from a normal random variable with covariance matrix $C$ through $Y = A X$ since $\bbE[YY^T] = A \bbE[XX^T] A^T = C$.
+
+\end{itemize}
 
 \item R Examples
 \begin{itemize}
+
 \item \texttt{mvn\_scale\_mixture.R} - This is a prelude to the IID Noise with Gaussian Process Prior model.  We take a multivariate normal with known mean and unknown covariance.  The covariance matrix is of the form $V/\phi$ where $V$ is known and $\phi$ is unknown. The prior distribution for $\phi$ is taken to be Gamma, which is conjugate to the normal distribution in this setting.  The posterior Gamma distribution is calculated.  Includes examples of \emph{sampling from multivariate normal}, \emph{multiple plots}, and \emph{writing plots to file}.
+
+\item \texttt{mvn\_sim\_using\_gibbs.R} - A simple example taken from Gelman's red book to illustrate Gibbs sampling.  We recreate a jointly normal distribution using Gibbs sampling.
+
+\item GP\_Prior - This directory contains the R code we use to simulate a Gaussian Process that has been perturbed by independent and identically distributed noise.  The details of this model are presented below.
+
+\begin{itemize}
+
+\item \texttt{generate\_data.R} - Generate one draw $y$.
+
+\item \texttt{gibbs\_sampler.R} - Calculate the posterior distribution for $\phi$ given one observation.
+
+\end{itemize}
+
 \end{itemize}
 
 \end{itemize}
@@ -243,5 +283,9 @@ which we can be approximated as above using a histogram as
 \[
 p(\phi_j | y_1, \ldots, y_n) \propto p(y_1 | \phi_j) \cdots p(y_n | \phi_j) \sum_{i=1}^N \1_{Q_\delta(\phi_j)}(S_j).
 \]
+
+\subsection{Code}
+
+The code for implementing this model can be found in \texttt{Code/GP Prior}.  We use R to generate a draw from a Gaussian process that has been perturbed in each coordinate by an independent and identically distributed random variable.  This data, along with the covariance matrix, must be copied to the directory that has the code C sampling code.  The output of this C code is the sample of $\phi$.
 
 \end{document}
